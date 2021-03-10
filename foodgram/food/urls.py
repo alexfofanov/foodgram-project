@@ -26,21 +26,21 @@ urlpatterns = [
         name='remove_purchase',
     ),
     path('new/', views.new_recipe, name='new_recipe'),
-    path('<author>/', views.author_recipe, name='author_recipe'),
-    path('<author>/<int:recipe_id>/', views.recipe, name='recipe'),
+    path('<str:author>/', views.author_recipe, name='author_recipe'),
+    path('<str:author>/<int:recipe_id>/', views.recipe, name='recipe'),
     path(
-        '<author>/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'
+        '<str:author>/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'
     ),
     path(
-        '<author>/<int:recipe_id>/delete/',
+        '<str:author>/<int:recipe_id>/delete/',
         views.recipe_delete,
         name='recipe_delete',
     ),
-    path('<username>/purchase/', views.purchase, name='purchase'),
-    path('<username>/subscription/', views.subscription, name='subscription'),
-    path('<username>/favorite/', views.favorite, name='favorite'),
+    path('<str:username>/purchase/', views.purchase, name='purchase'),
+    path('<str:username>/subscription/', views.subscription, name='subscription'),
+    path('<str:username>/favorite/', views.favorite, name='favorite'),
     path(
-        '<username>/purchase_download/',
+        '<str:username>/purchase_download/',
         views.purchase_download,
         name='purchase_download',
     ),

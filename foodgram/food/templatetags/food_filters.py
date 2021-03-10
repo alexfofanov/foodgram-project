@@ -6,6 +6,14 @@ register = template.Library()
 
 
 @register.filter
+def purchase_count(user):
+    if user.is_authenticated:
+        return Purchase.objects.filter(user=user).count()
+    else:
+        return 0
+
+
+@register.filter
 def is_favorite(recipe, user):
     return Favorite.objects.filter(user=user, recipe=recipe).exists()
 
@@ -22,9 +30,9 @@ def is_purchase(recipe, user):
 
 @register.filter
 def last_three_recipe(author):
-    recipe_list = Recipe.objects.filter(author=author).order_by('-pub_date')[
-        :3
-    ]
+    recipe_list = Recipe.objects.filter(
+                        author=author).order_by('-pub_date')[:3]
+
     return recipe_list
 
 

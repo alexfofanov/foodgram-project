@@ -1,8 +1,10 @@
-from .models import Ingridient, RecipeIngridient, Recipe
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
+from .models import Ingridient, Recipe, RecipeIngridient
 
 
-def teg_filter(tag):
+def tag_filter(tag):
 
     queries = []
     if 'breakfast' in tag:
@@ -53,6 +55,7 @@ def save_recipe_ingridients(recipe, recipe_ingridients):
     for ingridient in recipe_ingridients:
         RecipeIngridient.objects.create(
             recipe=recipe,
-            ingridient=Ingridient.objects.get(name=ingridient.get('name')),
+            ingridient=get_object_or_404(Ingridient,
+                                         name=ingridient.get('name')),
             quantity=ingridient.get('quantity'),
         )

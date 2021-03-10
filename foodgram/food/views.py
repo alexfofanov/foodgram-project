@@ -1,35 +1,22 @@
 import collections
 import json
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.conf import settings
 from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import (
-    Recipe,
-    Ingridient,
-    User,
-    Favorite,
-    RecipeIngridient,
-    Subscription,
-    Purchase,
-)
 from .forms import RecipeForm
-from .utils import get_recipe_ingridients, save_recipe_ingridients, teg_filter
+from .models import (Favorite, Ingridient, Purchase, Recipe, RecipeIngridient,
+                     Subscription, User)
+from .utils import get_recipe_ingridients, save_recipe_ingridients, tag_filter
 
 
 def index(request):
     tag = request.GET.get('tag', '')
-    recipe_list = teg_filter(tag)
-
-    if request.user.is_authenticated:
-        purchase_count = Purchase.objects.filter(user=request.user).count()
-    else:
-        purchase_count = 0
-
+    recipe_list = tag_filter(tag)
     paginator = Paginator(recipe_list, 3)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -37,7 +24,6 @@ def index(request):
     data = {
         'page': page,
         'paginator': paginator,
-        'purchase_count': purchase_count,
         'tag': tag,
     }
 
@@ -72,15 +58,9 @@ def recipe(request, author, recipe_id):
         'ingridient'
     ).filter(recipe_id=recipe)
 
-    if request.user.is_authenticated:
-        purchase_count = Purchase.objects.filter(user=request.user).count()
-    else:
-        purchase_count = 0
-
     data = {
         'recipe': recipe,
         'ingridients': ingridient_list,
-        'purchase_count': purchase_count,
     }
 
     return render(request, 'food/recipe.html', context=data)
@@ -110,6 +90,7 @@ def recipe_edit(request, author, recipe_id):
         return redirect('food:recipe', author=author, recipe_id=recipe_id)
 
 
+@login_required
 def recipe_delete(request, author, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     if request.user == recipe.author:
@@ -124,13 +105,8 @@ def author_recipe(request, author):
     author = get_object_or_404(User, username=author)
 
     tag = request.GET.get('tag', '')
-    recipe_list = teg_filter(tag).filter(author=author)
+    recipe_list = tag_filter(tag).filter(author=author)
     # recipe_list = Recipe.objects.filter(author=author).order_by('-pub_date')
-
-    if request.user.is_authenticated:
-        purchase_count = Purchase.objects.filter(user=request.user).count()
-    else:
-        purchase_count = 0
 
     paginator = Paginator(recipe_list, 3)
     page_number = request.GET.get('page')
@@ -139,7 +115,6 @@ def author_recipe(request, author):
         'author': author,
         'page': page,
         'paginator': paginator,
-        'purchase_count': purchase_count,
         'tag': tag,
     }
 
@@ -152,8 +127,6 @@ def subscription(request, username):
         user=request.user
     ).order_by('id')
 
-    purchase_count = Purchase.objects.filter(user=request.user).count()
-
     paginator = Paginator(subscription_list, 3)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -161,7 +134,6 @@ def subscription(request, username):
     data = {
         'page': page,
         'paginator': paginator,
-        'purchase_count': purchase_count,
     }
 
     return render(request, 'food/follow.html', context=data)
@@ -194,8 +166,6 @@ def favorite(request, username):
             query
         ).order_by('id')
 
-    purchase_count = Purchase.objects.filter(user=request.user).count()
-
     paginator = Paginator(favorite_list, 3)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -203,7 +173,6 @@ def favorite(request, username):
     data = {
         'page': page,
         'paginator': paginator,
-        'purchase_count': purchase_count,
         'tag': tag,
     }
 
@@ -213,10 +182,8 @@ def favorite(request, username):
 @login_required
 def purchase(request, username):
     purchase_list = Purchase.objects.filter(user=request.user)
-    purchase_count = Purchase.objects.filter(user=request.user).count()
     data = {
         'purchase_list': purchase_list,
-        'purchase_count': purchase_count,
     }
 
     return render(request, 'food/shopList.html', context=data)
@@ -264,7 +231,6 @@ def server_error(request):
 def add_subscription(request):
     if request.method == 'POST':
         author_id = json.loads(request.body).get('id')
-        print(User.objects.get(id=author_id))
         author = get_object_or_404(User, id=author_id)
         _, created = Subscription.objects.get_or_create(
             user=request.user, author=author
