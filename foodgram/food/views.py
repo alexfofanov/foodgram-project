@@ -148,7 +148,10 @@ def author_recipe(request, author):
 
 @login_required
 def subscription(request, username):
-    subscription_list = Subscription.objects.filter(user=request.user)
+    subscription_list = Subscription.objects.filter(
+        user=request.user
+    ).order_by('id')
+
     purchase_count = Purchase.objects.filter(user=request.user).count()
 
     paginator = Paginator(subscription_list, 3)
@@ -179,7 +182,9 @@ def favorite(request, username):
         queries.append(Q(recipe__dinner=True))
 
     if tag == '':
-        favorite_list = Favorite.objects.filter(user=request.user)
+        favorite_list = Favorite.objects.filter(
+            user=request.user
+        ).order_by('id')
     else:
         query = queries.pop()
         for item in queries:
@@ -187,7 +192,7 @@ def favorite(request, username):
 
         favorite_list = Favorite.objects.filter(user=request.user).filter(
             query
-        )
+        ).order_by('id')
 
     purchase_count = Purchase.objects.filter(user=request.user).count()
 

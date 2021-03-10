@@ -14,7 +14,7 @@ class Ingridient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='recipe_author'
+        User, on_delete=models.CASCADE, related_name='recipes'
     )
     pub_date = models.DateTimeField(
         'date published', auto_now_add=True, db_index=True
@@ -23,10 +23,9 @@ class Recipe(models.Model):
     breakfast = models.BooleanField(default=False)
     lunch = models.BooleanField(default=False)
     dinner = models.BooleanField(default=False)
-    time = models.CharField(max_length=3)
+    time = models.PositiveSmallIntegerField()
     description = models.TextField()
     picture = models.ImageField(upload_to='recipe/')
-    # slug = models.SlugField(unique=True)
 
     def __str__(self):
         return f'{self.pub_date}, ({self.name})'
@@ -34,36 +33,37 @@ class Recipe(models.Model):
 
 class RecipeIngridient(models.Model):
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='recipe_id'
+        Recipe, on_delete=models.CASCADE, related_name='recipe_ingridient'
     )
     ingridient = models.ForeignKey(
-        Ingridient, on_delete=models.CASCADE, related_name='ingridient_id'
+        Ingridient, on_delete=models.CASCADE,
+        related_name='ingridient_ingridient'
     )
     quantity = models.DecimalField(max_digits=3, decimal_places=0)
 
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscription_user'
+        User, on_delete=models.CASCADE, related_name='follower'
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscription_author'
+        User, on_delete=models.CASCADE, related_name='following'
     )
 
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='favorite_user'
+        User, on_delete=models.CASCADE, related_name='favorites'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='favorite_recipe'
+        Recipe, on_delete=models.CASCADE, related_name='favorites'
     )
 
 
 class Purchase(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='shopping_user'
+        User, on_delete=models.CASCADE, related_name='purchase'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='shopping_recipe'
+        Recipe, on_delete=models.CASCADE, related_name='purchase'
     )
