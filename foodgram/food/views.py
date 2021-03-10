@@ -89,7 +89,6 @@ def recipe(request, author, recipe_id):
 @login_required
 def recipe_edit(request, author, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    print(recipe.name)
     if request.user == recipe.author:
         recipe_ingridient = RecipeIngridient.objects.filter(recipe=recipe)
         form = RecipeForm(
@@ -254,6 +253,7 @@ def server_error(request):
 
 
 # ===== JS requests =====
+
 
 @login_required
 def add_subscription(request):

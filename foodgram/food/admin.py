@@ -29,6 +29,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (IngridientInline,)
     list_filter = ('name',)
 
+
 class RecipeIngridientsAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingridient', 'quantity')
 

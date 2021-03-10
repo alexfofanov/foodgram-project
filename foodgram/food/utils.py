@@ -11,11 +11,11 @@ def teg_filter(tag):
 
     if 'lunch' in tag:
         queries.append(Q(lunch=True))
-        # lunch = True    
+        # lunch = True
 
     if 'dinner' in tag:
         queries.append(Q(dinner=True))
-        # dinner = True    
+        # dinner = True
 
     if tag == '':
         recipe_list = Recipe.objects.filter().order_by('-pub_date')
@@ -26,7 +26,6 @@ def teg_filter(tag):
         recipe_list = Recipe.objects.filter(query).order_by('-pub_date')
 
     return recipe_list
-
 
 
 def get_recipe_ingridients(data):
@@ -55,5 +54,5 @@ def save_recipe_ingridients(recipe, recipe_ingridients):
         RecipeIngridient.objects.create(
             recipe=recipe,
             ingridient=Ingridient.objects.get(name=ingridient.get('name')),
-            quantity=ingridient.get('quantity')
+            quantity=ingridient.get('quantity'),
         )
