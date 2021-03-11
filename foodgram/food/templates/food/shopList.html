@@ -1,12 +1,12 @@
 {% extends "food/base.html" %}
 {% block title %}Список покупок{% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/shopList.css' %}">
+{% endblock%}
 
 {% block content %}
     {% csrf_token %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/shopList.css' %}">
-    {% include "food/nav.html" with purchase=True %}
-    
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Список покупок</h1>
@@ -20,11 +20,9 @@
                         {% thumbnail purchase.recipe.picture "900x900" crop="center" upscale=True as im %}
                             <img src="{{ im.url }}" alt="Какой-то текст" class="recipe__image recipe__image_big">
                         {% endthumbnail %}
-                        <!-- <img src="./images/testCardImg.png" alt="какой-то текст" class="recipe__image recipe__image_big"> -->
                         <h3 class="recipe__title">{{ purchase.recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ purchase.recipe.time }} мин.</p>
                     </div>
-                    <!-- <a href="#" class="shopping-list__button link">Удалить</a> -->
                     <a href="{% url 'food:remove_purchase' purchase.recipe.id %}" class="shopping-list__button link">Удалить</a>
                 </li>
                 {% endfor %}
@@ -33,7 +31,6 @@
             {% if purchase_list %}
                 <a href="{% url 'food:purchase_download' username=user.username %}" target="_blank"><button class="button button_style_blue">Скачать список</button></a>
             {% endif %}
-            <!-- <a href="#"><button class="button button_style_blue">Скачать список</button></a> -->            
         </div>
     
         <script src="{% static './js/config/config.js' %}"></script>

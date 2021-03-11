@@ -1,19 +1,18 @@
 {% extends "food/base.html" %}
 {% block title %} {{ recipe.name }} {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/single.css' %}">
+{% endblock%}    
 
 {% block content %}
     {% csrf_token %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/single.css' %}">
-    {% include "food/nav.html" %}
-
     <main class="main container">
         <div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
             {% load thumbnail %}
             {% thumbnail recipe.picture "900x900" crop="center" upscale=True as im %}
                 <img src="{{ im.url }}" alt="Какой-то текст" class="single-card__image">
             {% endthumbnail %}  
-            <!-- <img src="./images/testCardImg.png" alt="какой-то текст" class="single-card__image"> -->
             <div class="single-card__info">
                 <div class="single-card__header-info">
                     <h1 class="single-card__title">{{ recipe.name }}</h1>
@@ -56,8 +55,6 @@
                             <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
                         {% endif %}
 
-                        <!-- <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-check button__icon"></span> Добавить в покупки</button></li> -->   
-
                         {% if recipe.author.id|is_subscription:user.id %}
                             <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></li>
                         {% else %}
@@ -91,6 +88,5 @@
         <script src="{% static './js/components/Header.js' %}"></script>
         <script src="{% static './js/api/Api.js' %}"></script>
         <script src="{% static 'singlePage.js' %}"></script>
-
     </main>
 {% endblock %}

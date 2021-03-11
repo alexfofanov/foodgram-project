@@ -1,26 +1,26 @@
 {% extends "food/base.html" %}
 {% block title %} Избранное {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/index.css' %}">
+{% endblock%}    
 
 {% block content %}
     {% csrf_token %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/index.css' %}">
-    {% include "food/nav.html" with favorite=True %}
-    
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">Избранное</h1>
-            {% include 'food/tag.html' %}
+            {% include 'includes/tag.html' %}
         </div>
 
         <div class="card-list">
             {% for favorite in page %}
-                {% include 'food/recipe_card.html' with recipe=favorite.recipe %}
+                {% include 'includes/recipe_card.html' with recipe=favorite.recipe %}
             {% endfor %}
         </div>
         
         {% if page.has_other_pages %}
-            {% include 'food/paginator.html' with items=page paginator=paginator%}
+            {% include 'includes/paginator.html' with items=page paginator=paginator%}
         {% endif %}
 
         <script src="{% static './js/components/MainCards.js' %}"></script>

@@ -1,68 +1,61 @@
 {% extends "food/base.html" %}
 {% block title %} Мои подписки {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/myFollow.css' %}">
+{% endblock%}    
 
 {% block content %}
     {% csrf_token %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/myFollow.css' %}">
-    {% include "food/nav.html" with follow=True %}
-    
     <main class="main container">
-
-    <div class="main__header">
-        <h1 class="main__title">Мои подписки</h1>
-    </div>
-
-    <div class="card-list">
-        {% for subscription in page %}
-        <div class="card-user" data-author={{ subscription.author.id }}>
-        <div class="card-user__header">
-            <h2 class="card-user__title">{{ subscription.author.first_name }}</h2>
+        <div class="main__header">
+            <h1 class="main__title">Мои подписки</h1>
         </div>
-        <div class="card-user__body">
-            <ul class="card-user__items">
-                {% load food_filters %}
-                {% for recipe in subscription.author|last_three_recipe %} 
-                <li class="card-user__item">
-                    <div class="recipe">
-                        {% load thumbnail %}
-                        {% thumbnail recipe.picture "900x900" crop="center" upscale=True as im %}
-                            <img src="{{ im.url }}" alt="Какой-то текст" class="recipe__image">
-                        {% endthumbnail %}  
-                        <!-- <img src="./images/testCardImg.png" alt="какой-то-текст" class="recipe__image"> -->
-                        <h3 class="recipe__title">{{ recipe.name }}</h3>
-                        <p class="recipe__text"><span class="icon-time"></span> {{recipe.time}} мин.</p>
-                    </div>
-                </li>
-                {% endfor %}
-               
-                {% if subscription.author|recipe_count > 0 %}
+
+        <div class="card-list">
+            {% for subscription in page %}
+            <div class="card-user" data-author={{ subscription.author.id }}>
+            <div class="card-user__header">
+                <h2 class="card-user__title">{{ subscription.author.first_name }}</h2>
+            </div>
+            <div class="card-user__body">
+                <ul class="card-user__items">
+                    {% load food_filters %}
+                    {% for recipe in subscription.author|last_three_recipe %} 
                     <li class="card-user__item">
-                        <a href="{% url 'food:author_recipe' subscription.author.username %}" class="card-user__link link">Еще {{ subscription.author|recipe_count }} рецептов...</a>
+                        <div class="recipe">
+                            {% load thumbnail %}
+                            {% thumbnail recipe.picture "900x900" crop="center" upscale=True as im %}
+                                <img src="{{ im.url }}" alt="Какой-то текст" class="recipe__image">
+                            {% endthumbnail %}  
+                            <h3 class="recipe__title">{{ recipe.name }}</h3>
+                            <p class="recipe__text"><span class="icon-time"></span> {{recipe.time}} мин.</p>
+                        </div>
                     </li>
-                {% endif %}
-            </ul>
-            
+                    {% endfor %}
+                
+                    {% if subscription.author|recipe_count > 0 %}
+                        <li class="card-user__item">
+                            <a href="{% url 'food:author_recipe' subscription.author.username %}" class="card-user__link link">Еще {{ subscription.author|recipe_count }} рецептов...</a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+
+            <div class="card-user__footer">
+                <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+            </div>
         </div>
-        
-        
-        <div class="card-user__footer">
-            <!-- <button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться</button> -->
-            <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+        {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-    </div>
 
-    
-
-<script src="{% static './js/config/config.js' %}"></script>
-<script src="{% static './js/components/MainCards.js' %}"></script>
-<script src="{% static './js/components/MyFollow.js' %}"></script>
-<script src="{% static './js/components/Subscribe.js' %}"></script>
-<script src="{% static './js/components/Header.js' %}"></script>
-<script src="{% static './js/api/Api.js' %}"></script>
-<script src="{% static 'myFollow.js' %} "></script>
-
-</main>
+        <script src="{% static './js/config/config.js' %}"></script>
+        <script src="{% static './js/components/MainCards.js' %}"></script>
+        <script src="{% static './js/components/MyFollow.js' %}"></script>
+        <script src="{% static './js/components/Subscribe.js' %}"></script>
+        <script src="{% static './js/components/Header.js' %}"></script>
+        <script src="{% static './js/api/Api.js' %}"></script>
+        <script src="{% static 'myFollow.js' %} "></script>
+    </main>
 {% endblock %}

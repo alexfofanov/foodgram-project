@@ -17,7 +17,7 @@ from .utils import get_recipe_ingridients, save_recipe_ingridients, tag_filter
 def index(request):
     tag = request.GET.get('tag', '')
     recipe_list = tag_filter(tag)
-    paginator = Paginator(recipe_list, 3)
+    paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -108,7 +108,7 @@ def author_recipe(request, author):
     recipe_list = tag_filter(tag).filter(author=author)
     # recipe_list = Recipe.objects.filter(author=author).order_by('-pub_date')
 
-    paginator = Paginator(recipe_list, 3)
+    paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     data = {
@@ -127,7 +127,7 @@ def subscription(request, username):
         user=request.user
     ).order_by('id')
 
-    paginator = Paginator(subscription_list, 3)
+    paginator = Paginator(subscription_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -166,7 +166,7 @@ def favorite(request, username):
             query
         ).order_by('id')
 
-    paginator = Paginator(favorite_list, 3)
+    paginator = Paginator(favorite_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 

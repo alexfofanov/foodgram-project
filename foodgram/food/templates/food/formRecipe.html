@@ -2,12 +2,12 @@
 {% block title %} 
     {% if form.name.value %}Редактирование рецепта{% else %}Создание рецепта{% endif %}
 {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/form.css' %}">
+{% endblock%}    
 
 {% block content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/form.css' %}">
-    {% include "food/nav.html" with recipe_new=True %}
-
     <main class="main container">
         <div class="main__header">
             <h1 class="main__title">{% if form.name.value %}Редактирование рецепта{% else %}Создание рецепта{% endif %}</h1>
@@ -78,7 +78,7 @@
                         </div>
                         <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                         <span class="form__error"></span>
-                </div>
+                    </div>
                 </div>
 
                 <div class="form__group">
@@ -91,8 +91,8 @@
                         <span class="form__error">{{ form.time.errors.as_text|escape }}</span>
                     {% endif %}
                     </div>        
-
                 </div>
+
                 <div class="form__group">
                     <label for="id_description" class="form__label">Описание</label>
                     <div class="form__field-group">
@@ -102,8 +102,8 @@
                         <span class="form__error">{{ form.description.errors.as_text|escape }}</span>
                     {% endif %}
                     </div>    
-                
                 </div>
+
                 <div class="form__group">
                     <span class="form__label">Загрузить фото</span>
                     <div class="form__field-group">
@@ -113,19 +113,9 @@
                         <span class="form__error">{{ form.picture.errors.as_text|escape }}</span>
                     {% endif %}
                     </div>
-
-                    <!--
-                    <span class="form__label">Загрузить фото</span>
-                    <div class="form__field-group">
-                        <input type="file" name="picture" id="id_picture">
-                        <span class="form__error"></span>
-                    </div>
-                    -->
-
                 </div>
 
                 <div class="form__footer">
-                    <!-- <button class="button button_style_blue">Создать рецепт</button> -->
                     {% if recipe %}
                         <button class="button button_style_blue">Удалить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' recipe.author.username recipe.id %}" class="form__ingredient-link">Удалить</a>
                     {% else %}

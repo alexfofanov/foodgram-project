@@ -1,51 +1,47 @@
 {% extends "food/base.html" %}
 {% block title %} Рецепты {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static './pages/index.css' %}">
+{% endblock%} 
 
 {% block content %}
     {% csrf_token %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static './pages/index.css' %}">
-    {% include "food/nav.html" %}
-
     <main class="main container">
-    <div class="main__header">
-        <h1 class="main__title">{{ author.first_name }}</h1>
-        {% include 'food/tag.html' %}
-    </div>
-
-    {% if user.is_authenticated %}  
-        <div class="author-subscribe" data-author={{ author.id }}>
-        <!-- <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p> -->
-        {% load food_filters %}
-        {% if author.id|is_subscription:user.id %}
-            <!-- <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></li> -->
-            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Отписаться от автора</button></p>
-        {% else %}
-            <!-- <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li> -->
-            <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
-        {% endif%}
+        <div class="main__header">
+            <h1 class="main__title">{{ author.first_name }}</h1>
+            {% include 'includes/tag.html' %}
         </div>
-    {% endif%}    
-        
-    <div class="card-list" >
-        {% for recipe in page %}
-            {% include 'food/recipe_card.html' with recipe=recipe %}
-        {% endfor %}
-    </div>
 
-    {% if page.has_other_pages %}
-        {% include 'food/paginator.html' with items=page paginator=paginator%}
-    {% endif %}
+        {% if user.is_authenticated %}  
+            <div class="author-subscribe" data-author={{ author.id }}>
+            {% load food_filters %}
+            {% if author.id|is_subscription:user.id %}
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Отписаться от автора</button></p>
+            {% else %}
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+            {% endif%}
+            </div>
+        {% endif%}    
 
-    <script src="{% static './js/components/MainCards.js' %}"></script> 
-    <script src="{% static './js/components/Purchases.js' %}"></script>
-    <script src="{% static './js/components/Favorites.js' %}"></script>
-    <script src="{% static './js/components/Subscribe.js' %}"></script> 
-    <script src="{% static './js/config/config.js' %}"></script>
-    <script src="{% static './js/components/AuthorRecipe.js' %}"></script>
-    <script src="{% static './js/components/Header.js' %}"></script>    
-    <script src="{% static './js/api/Api.js' %}"></script>
-    <script src="{% static 'authorRecipe.js' %}"></script>
+        <div class="card-list" >
+            {% for recipe in page %}
+                {% include 'includes/recipe_card.html' with recipe=recipe %}
+            {% endfor %}
+        </div>
 
-</main>
+        {% if page.has_other_pages %}
+            {% include 'includes/paginator.html' with items=page paginator=paginator%}
+        {% endif %}
+
+        <script src="{% static './js/components/MainCards.js' %}"></script> 
+        <script src="{% static './js/components/Purchases.js' %}"></script>
+        <script src="{% static './js/components/Favorites.js' %}"></script>
+        <script src="{% static './js/components/Subscribe.js' %}"></script> 
+        <script src="{% static './js/config/config.js' %}"></script>
+        <script src="{% static './js/components/AuthorRecipe.js' %}"></script>
+        <script src="{% static './js/components/Header.js' %}"></script>    
+        <script src="{% static './js/api/Api.js' %}"></script>
+        <script src="{% static 'authorRecipe.js' %}"></script>
+    </main>
 {% endblock %}
