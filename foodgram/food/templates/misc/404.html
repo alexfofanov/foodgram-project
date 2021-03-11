@@ -1,11 +1,11 @@
-{% extends 'food/base.html' %}
+{% extends "base.html" %}
 {% block title %} Ошибка 404 {% endblock %}
+{% load static %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static '/pages/index.css' %}">
+{% endblock stylesheet %}
 
 {% block content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static '/pages/index.css' %}">
-
         <h1>Ошибка 404</h1>
         <p>Страница {{ path }} не найдена</p>
-
 {% endblock %}

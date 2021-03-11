@@ -4,7 +4,6 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -35,16 +34,9 @@ def new_recipe(request):
     form = RecipeForm(request.POST or None, files=request.FILES or None)
 
     if form.is_valid():
-        recipe = Recipe.objects.create(
-            author=request.user,
-            name=form.cleaned_data['name'],
-            breakfast=form.cleaned_data['breakfast'],
-            lunch=form.cleaned_data['lunch'],
-            dinner=form.cleaned_data['dinner'],
-            time=form.cleaned_data['time'],
-            description=form.cleaned_data['description'],
-            picture=form.cleaned_data['picture'],
-        )
+        recipe = form.save(commit=False)
+        recipe.author = request.user
+        recipe.save()
         recipe_ingridients = get_recipe_ingridients(request.POST)
         save_recipe_ingridients(recipe, recipe_ingridients)
         return redirect('food:index')
@@ -53,7 +45,8 @@ def new_recipe(request):
 
 
 def recipe(request, author, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
+    author = get_object_or_404(User, username=author)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author=author.id)
     ingridient_list = RecipeIngridient.objects.select_related(
         'ingridient'
     ).filter(recipe_id=recipe)
@@ -68,46 +61,45 @@ def recipe(request, author, recipe_id):
 
 @login_required
 def recipe_edit(request, author, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
-    if request.user == recipe.author:
-        recipe_ingridient = RecipeIngridient.objects.filter(recipe=recipe)
-        form = RecipeForm(
-            request.POST or None, files=request.FILES or None, instance=recipe
-        )
+    author = get_object_or_404(User, username=author)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author=author)
 
-        data = {'form': form, 'recipe_ingridient': recipe_ingridient}
-
-        if form.is_valid():
-            recipe = form.save()
-            recipe_ingridient.delete()
-            recipe_ingridients = get_recipe_ingridients(request.POST)
-            save_recipe_ingridients(recipe, recipe_ingridients)
-
-            return redirect('food:recipe', author=author, recipe_id=recipe_id)
-
-        return render(request, 'food/formRecipe.html', context=data)
-    else:
+    if request.user != recipe.author:
         return redirect('food:recipe', author=author, recipe_id=recipe_id)
+
+    recipe_ingridient = RecipeIngridient.objects.filter(recipe=recipe)
+
+    form = RecipeForm(
+        request.POST or None, files=request.FILES or None, instance=recipe
+    )
+
+    data = {'form': form, 'recipe_ingridient': recipe_ingridient}
+
+    if form.is_valid():
+        recipe = form.save()
+        recipe_ingridient.delete()
+        recipe_ingridients = get_recipe_ingridients(request.POST)
+        save_recipe_ingridients(recipe, recipe_ingridients)
+        return redirect('food:recipe', author=author, recipe_id=recipe_id)
+
+    return render(request, 'food/formRecipe.html', context=data)
 
 
 @login_required
 def recipe_delete(request, author, recipe_id):
-    recipe = get_object_or_404(Recipe, id=recipe_id)
+    author = get_object_or_404(User, username=author)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author=author)
     if request.user == recipe.author:
         recipe.delte()
         return redirect('food:index')
 
-    else:
-        return redirect('food:recipe', author=author, recipe_id=recipe_id)
+    return redirect('food:recipe', author=author, recipe_id=recipe_id)
 
 
 def author_recipe(request, author):
     author = get_object_or_404(User, username=author)
-
     tag = request.GET.get('tag', '')
     recipe_list = tag_filter(tag).filter(author=author)
-    # recipe_list = Recipe.objects.filter(author=author).order_by('-pub_date')
-
     paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -143,30 +135,12 @@ def subscription(request, username):
 def favorite(request, username):
     tag = request.GET.get('tag', '')
 
-    queries = []
-    if 'breakfast' in tag:
-        queries.append(Q(recipe__breakfast=True))
+    recipe_list = tag_filter(tag)
+    favorite_recipe_list = recipe_list.filter(favorites__user=request.user)
 
-    if 'lunch' in tag:
-        queries.append(Q(recipe__lunch=True))
+    paginator = Paginator(favorite_recipe_list, 
+                          settings.PAGINATOR_NUM_PER_PAGE)
 
-    if 'dinner' in tag:
-        queries.append(Q(recipe__dinner=True))
-
-    if tag == '':
-        favorite_list = Favorite.objects.filter(
-            user=request.user
-        ).order_by('id')
-    else:
-        query = queries.pop()
-        for item in queries:
-            query |= item
-
-        favorite_list = Favorite.objects.filter(user=request.user).filter(
-            query
-        ).order_by('id')
-
-    paginator = Paginator(favorite_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -203,16 +177,14 @@ def purchase_download(request, username):
                 ingridient.quantity
             )
 
-    with open(settings.MEDIA_ROOT + '/purches.txt', 'w+') as file:
-        for name, quantity in purchase_ingridient.items():
-            file.write(f'{name} - {quantity}\n')
+    purches_text = ''
+    for name, quantity in purchase_ingridient.items():
+        purches_text += f'{name} - {quantity}\n'
 
-    response = HttpResponse(
-        open(settings.MEDIA_ROOT + '/purches.txt'),
-        content_type='application/txt',
-    )
+    response = HttpResponse(purches_text, 
+                            content_type='application/text charset=utf-8')
+
     response['Content-Disposition'] = 'attachment; filename="purches.txt"'
-    # response['charset'] = 'UTF-8'
     return response
 
 
@@ -236,10 +208,7 @@ def add_subscription(request):
             user=request.user, author=author
         )
 
-    if created:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': created}
 
     return JsonResponse(data, safe=False)
 
@@ -251,10 +220,7 @@ def remove_subscription(request, author_id):
         user=request.user, author=author
     ).delete()
 
-    if remove:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': remove}
 
     return JsonResponse(data, safe=False)
 
@@ -268,10 +234,7 @@ def add_favorite(request):
             user=request.user, recipe=recipe
         )
 
-    if created:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': created}
 
     return JsonResponse(data, safe=False)
 
@@ -281,10 +244,7 @@ def remove_favorite(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     remove = Favorite.objects.filter(user=request.user, recipe=recipe).delete()
 
-    if remove:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': remove}
 
     return JsonResponse(data, safe=False)
 
@@ -298,10 +258,7 @@ def add_purchase(request):
             user=request.user, recipe=recipe
         )
 
-    if created:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': created}
 
     return JsonResponse(data, safe=False)
 
@@ -311,10 +268,7 @@ def remove_purchase(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     remove = Purchase.objects.filter(user=request.user, recipe=recipe).delete()
 
-    if remove:
-        data = [{'success': True}]
-    else:
-        data = [{'success': False}]
+    data = {'success': remove}
 
     return JsonResponse(data, safe=False)
 
@@ -328,6 +282,6 @@ def ingredients(request):
             for ingredient in ingredients_query
         ]
     else:
-        data = [{'success': False}]
+        data = {'success': False}
 
     return JsonResponse(data, safe=False)

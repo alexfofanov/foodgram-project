@@ -29,7 +29,9 @@ urlpatterns = [
     path('<str:author>/', views.author_recipe, name='author_recipe'),
     path('<str:author>/<int:recipe_id>/', views.recipe, name='recipe'),
     path(
-        '<str:author>/<int:recipe_id>/edit/', views.recipe_edit, name='recipe_edit'
+        '<str:author>/<int:recipe_id>/edit/',
+        views.recipe_edit,
+        name='recipe_edit'
     ),
     path(
         '<str:author>/<int:recipe_id>/delete/',
@@ -37,7 +39,11 @@ urlpatterns = [
         name='recipe_delete',
     ),
     path('<str:username>/purchase/', views.purchase, name='purchase'),
-    path('<str:username>/subscription/', views.subscription, name='subscription'),
+    path(
+        '<str:username>/subscription/',
+        views.subscription,
+        name='subscription'
+    ),
     path('<str:username>/favorite/', views.favorite, name='favorite'),
     path(
         '<str:username>/purchase_download/',

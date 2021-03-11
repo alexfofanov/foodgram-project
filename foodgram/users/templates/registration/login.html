@@ -13,7 +13,7 @@
         <div class="form-container">
             <form class="form" method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-                {% load user_filters %}
+                {% load food_filters %}
                 <div class="form__group">
                     <span class="form__error">{{ form.non_field_errors.as_text|escape }}</span>
                 </div>
