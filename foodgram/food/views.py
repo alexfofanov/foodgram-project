@@ -138,7 +138,7 @@ def favorite(request, username):
     recipe_list = tag_filter(tag)
     favorite_recipe_list = recipe_list.filter(favorites__user=request.user)
 
-    paginator = Paginator(favorite_recipe_list, 
+    paginator = Paginator(favorite_recipe_list,
                           settings.PAGINATOR_NUM_PER_PAGE)
 
     page_number = request.GET.get('page')
@@ -181,7 +181,7 @@ def purchase_download(request, username):
     for name, quantity in purchase_ingridient.items():
         purches_text += f'{name} - {quantity}\n'
 
-    response = HttpResponse(purches_text, 
+    response = HttpResponse(purches_text,
                             content_type='application/text charset=utf-8')
 
     response['Content-Disposition'] = 'attachment; filename="purches.txt"'

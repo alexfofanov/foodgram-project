@@ -20,6 +20,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Lint with flake8
-      run: flake8
-
-
+      run: flake8 --ignore=F811 --exclude foodgram/food/migrations/ .
