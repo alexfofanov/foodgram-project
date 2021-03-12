@@ -19,4 +19,4 @@ class Command(BaseCommand):
                 )
                 print(ingridient.id, row)
 
-        print('TOTAL:', ingridients_cnt) 
+        print('TOTAL:', ingridients_cnt)
