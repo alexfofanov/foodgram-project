@@ -31,7 +31,7 @@ def is_purchase(recipe, user):
 @register.filter
 def last_three_recipe(author):
     recipe_list = Recipe.objects.filter(
-                        author=author).order_by('-pub_date')[:3]
+        author=author).order_by('-pub_date')[:3]
 
     return recipe_list
 
