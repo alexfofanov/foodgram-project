@@ -1,6 +1,6 @@
 {% extends "food/base.html" %} 
 {% block title %} 
-    {% if form.name.value %}Редактирование рецепта{% else %}Создание рецепта{% endif %}
+    {% if edit_flag %}Редактирование рецепта{% else %}Создание рецепта{% endif %}
 {% endblock %}
 {% load static %}
 {% block stylesheet %}
@@ -33,18 +33,15 @@
                     <div class="form__field-group">
                         <div class="tags">
 
+                            {% for tag in tags %}
                             <div class="tags__item">
-                                {{ form.breakfast|addclass:"tags__checkbox tags__checkbox_style_orange" }}
-                                <label for="{{ form.breakfast.id_for_label }}" class="tags__label">Завтрак</label>
+                                <input type="checkbox" name="tags" value="{{ tag.id }}" id="id_{{ tag.slug }}"
+                                    class="tags__checkbox tags__checkbox_style_{{ tag.color }}"
+                                    {% if tag.slug in recipe_tags %} checked {% endif %}>
+    
+                                <label for="id_{{ tag.slug }}" class="tags__label">{{ tag.name }}</label>
                             </div>
-                            <div class="tags__item">
-                                {{ form.lunch|addclass:"tags__checkbox tags__checkbox_style_green" }}
-                                <label for="{{ form.lunch.id_for_label }}" class="tags__label">Обед</label>
-                            </div>
-                            <div class="tags__item">
-                                {{ form.dinner|addclass:"tags__checkbox tags__checkbox_style_purple" }}
-                                <label for="{{ form.dinner.id_for_label }}" class="tags__label">Ужин</label>
-                            </div>
+                            {% endfor %}
 
                         </div>
                         <span class="form__error">{{ form.non_field_errors.as_text|escape }}</span>
@@ -116,8 +113,9 @@
                 </div>
 
                 <div class="form__footer">
-                    {% if recipe %}
-                        <button class="button button_style_blue">Удалить</button> <a style="margin-left: 2.5em" href="{% url 'recipe_delete' recipe.author.username recipe.id %}" class="form__ingredient-link">Удалить</a>
+                    {% if edit_flag %}
+                        <button class="button button_style_blue">Сохранить</button> 
+                        <a style="margin-left: 2.5em" href="{% url 'food:recipe_delete' author=user.username recipe_id=recipe_id %}" class="form{__ingredient-link">Удалить</a>
                     {% else %}
                         <button class="button button_style_blue">Создать рецепт</button>
                     {% endif %}

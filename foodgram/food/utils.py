@@ -1,31 +1,17 @@
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
-from .models import Ingridient, Recipe, RecipeIngridient
+from .models import Ingridient, Recipe, RecipeIngridient, Tag
 
 
-def tag_filter(tag):
+def tag_filter(filter):
+    if filter == '':
+        return Recipe.objects.all().order_by("-pub_date")
 
-    queries = []
-    if 'breakfast' in tag:
-        queries.append(Q(breakfast=True))
-        # breakfast = True
+    tags = Tag.objects.all()
+    tags_filter = [tag.slug for tag in tags if tag.slug in filter] 
 
-    if 'lunch' in tag:
-        queries.append(Q(lunch=True))
-        # lunch = True
-
-    if 'dinner' in tag:
-        queries.append(Q(dinner=True))
-        # dinner = True
-
-    if tag == '':
-        recipe_list = Recipe.objects.filter().order_by('-pub_date')
-    else:
-        query = queries.pop()
-        for item in queries:
-            query |= item
-        recipe_list = Recipe.objects.filter(query).order_by('-pub_date')
+    recipe_list = Recipe.objects.filter(
+        tags__slug__in=tags_filter).order_by("-pub_date").distinct()
 
     return recipe_list
 

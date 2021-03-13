@@ -9,13 +9,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
 from .models import (Favorite, Ingridient, Purchase, Recipe, RecipeIngridient,
-                     Subscription, User)
+                     Subscription, User, Tag)
 from .utils import get_recipe_ingridients, save_recipe_ingridients, tag_filter
 
 
 def index(request):
-    tag = request.GET.get('tag', '')
-    recipe_list = tag_filter(tag)
+    filter = request.GET.get('filter', '')
+    recipe_list = tag_filter(filter)
     paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -23,7 +23,7 @@ def index(request):
     data = {
         'page': page,
         'paginator': paginator,
-        'tag': tag,
+        'filter': filter
     }
 
     return render(request, 'food/index.html', context=data)
@@ -39,9 +39,17 @@ def new_recipe(request):
         recipe.save()
         recipe_ingridients = get_recipe_ingridients(request.POST)
         save_recipe_ingridients(recipe, recipe_ingridients)
+        form.save_m2m()
         return redirect('food:index')
 
-    return render(request, 'food/formRecipe.html', {'form': form})
+    tags = Tag.objects.all()
+    data = {
+        'form': form,
+        'tags': tags,
+        'edit_flag': False,
+    }   
+
+    return render(request, 'food/formRecipe.html', context=data)
 
 
 def recipe(request, author, recipe_id):
@@ -73,14 +81,23 @@ def recipe_edit(request, author, recipe_id):
         request.POST or None, files=request.FILES or None, instance=recipe
     )
 
-    data = {'form': form, 'recipe_ingridient': recipe_ingridient}
-
     if form.is_valid():
         recipe = form.save()
         recipe_ingridient.delete()
         recipe_ingridients = get_recipe_ingridients(request.POST)
         save_recipe_ingridients(recipe, recipe_ingridients)
         return redirect('food:recipe', author=author, recipe_id=recipe_id)
+
+    tags = Tag.objects.all()
+    recipe_tags = recipe.tags.values_list('slug', flat=True)
+    data = {
+        'form': form,
+        'tags': tags,
+        'recipe_ingridient': recipe_ingridient,
+        'recipe_tags': recipe_tags,
+        'recipe_id': recipe.id,
+        'edit_flag': True,
+    }
 
     return render(request, 'food/formRecipe.html', context=data)
 
@@ -90,7 +107,7 @@ def recipe_delete(request, author, recipe_id):
     author = get_object_or_404(User, username=author)
     recipe = get_object_or_404(Recipe, id=recipe_id, author=author)
     if request.user == recipe.author:
-        recipe.delte()
+        recipe.delete()
         return redirect('food:index')
 
     return redirect('food:recipe', author=author, recipe_id=recipe_id)
@@ -98,8 +115,8 @@ def recipe_delete(request, author, recipe_id):
 
 def author_recipe(request, author):
     author = get_object_or_404(User, username=author)
-    tag = request.GET.get('tag', '')
-    recipe_list = tag_filter(tag).filter(author=author)
+    filter = request.GET.get('filter', '')
+    recipe_list = tag_filter(filter).filter(author=author)
     paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -107,7 +124,7 @@ def author_recipe(request, author):
         'author': author,
         'page': page,
         'paginator': paginator,
-        'tag': tag,
+        'filter': filter,
     }
 
     return render(request, 'food/authorRecipe.html', context=data)
@@ -133,9 +150,9 @@ def subscription(request, username):
 
 @login_required
 def favorite(request, username):
-    tag = request.GET.get('tag', '')
+    filter = request.GET.get('filter', '')
 
-    recipe_list = tag_filter(tag)
+    recipe_list = tag_filter(filter)
     favorite_recipe_list = recipe_list.filter(favorites__user=request.user)
 
     paginator = Paginator(favorite_recipe_list,
@@ -147,7 +164,7 @@ def favorite(request, username):
     data = {
         'page': page,
         'paginator': paginator,
-        'tag': tag,
+        'filter': filter,
     }
 
     return render(request, 'food/favorite.html', context=data)

@@ -1,6 +1,6 @@
 from django import template
 
-from food.models import Favorite, Subscription, Purchase, Recipe
+from food.models import Favorite, Subscription, Purchase, Recipe, Tag
 
 register = template.Library()
 
@@ -45,3 +45,8 @@ def recipe_count(author):
 @register.filter
 def addclass(field, css):
     return field.as_widget(attrs={"class": css})
+
+
+@register.filter
+def get_all_tags(x):
+    return Tag.objects.all()

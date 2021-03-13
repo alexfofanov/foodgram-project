@@ -12,6 +12,15 @@ class Ingridient(models.Model):
         return f'{self.name},({self.unit})'
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=7)
+    slug = models.SlugField(unique=True, max_length=15, blank=True, null=True)
+    color = models.CharField(max_length=15, blank=True, null=True)
+
+    def __str__(self):
+        return self.slug
+
+
 class Recipe(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='recipes'
@@ -20,9 +29,7 @@ class Recipe(models.Model):
         'date published', auto_now_add=True, db_index=True
     )
     name = models.CharField(max_length=50)
-    breakfast = models.BooleanField(default=False)
-    lunch = models.BooleanField(default=False)
-    dinner = models.BooleanField(default=False)
+    tags = models.ManyToManyField(Tag, related_name="recipes")
     time = models.PositiveSmallIntegerField()
     description = models.TextField()
     picture = models.ImageField(upload_to='recipe/')

@@ -133,3 +133,4 @@ template_source/
 media/
 static/
 .vscode/
+setup.sh
