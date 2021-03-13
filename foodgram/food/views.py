@@ -33,7 +33,7 @@ def index(request):
 def new_recipe(request):
     form = RecipeForm(request.POST or None, files=request.FILES or None)
 
-    if form.is_valid():
+    if request.method == "POST" and form.is_valid():
         recipe = form.save(commit=False)
         recipe.author = request.user
         recipe.save()

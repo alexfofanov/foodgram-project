@@ -17,6 +17,12 @@ services:
     volumes:
       - static_data:/code/foodgram/static/
       - media_data:/code/foodgram/media/
+    
+    # command: python manage.py migrate  
+    # command: python manage.py collectstatic
+    # command: python manage.py load_ingredients
+    # command: python manage.py load_tags
+      
     command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000 # --access-logfile gunicorn_access.log
     ports:
       - "8000:8000"
