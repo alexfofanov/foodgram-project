@@ -8,7 +8,7 @@ def tag_filter(filter):
         return Recipe.objects.all().order_by("-pub_date")
 
     tags = Tag.objects.all()
-    tags_filter = [tag.slug for tag in tags if tag.slug in filter] 
+    tags_filter = [tag.slug for tag in tags if tag.slug in filter]
 
     recipe_list = Recipe.objects.filter(
         tags__slug__in=tags_filter).order_by("-pub_date").distinct()

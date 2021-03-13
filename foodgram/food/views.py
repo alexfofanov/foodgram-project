@@ -47,7 +47,7 @@ def new_recipe(request):
         'form': form,
         'tags': tags,
         'edit_flag': False,
-    }   
+    }
 
     return render(request, 'food/formRecipe.html', context=data)
 
