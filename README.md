@@ -1,9 +1,9 @@
 # foodgram-project
-![api_yamdb](https://github.com/alexfofanov/yamdb_final/workflows/api_yamdb_workflow/badge.svg)
+![foodgram-project](https://github.com/alexfofanov/foodgram-project/workflows/foodgram_workflow/badge.svg)
 
 Это онлайн-сервис, где пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
-## Установка и запуск
+## Установка и запуск на примере Linux
 
 ### Установите docker и docker-compose
 Проверьте установлен ли docker и docker-compose
@@ -13,6 +13,9 @@
 
 В случае отсутствия установите согласно документации по установке [docker](https://docs.docker.com/engine/install/) и [docker-compose](https://docs.docker.com/compose/install/) на официальном сайте.
 
+### Клонировать с помощью git ###
+
+git clone https://github.com/alexfofanov/foodgram-project.git
 
 ### Создайте файл .env с переменными окружения для работы с БД в корне приложения и добавьте в него следующие параметры:
 
