@@ -33,7 +33,7 @@ def index(request):
 def new_recipe(request):
     form = RecipeForm(request.POST or None, files=request.FILES or None)
 
-    if request.method == "POST" and form.is_valid():
+    if form.is_valid():
         recipe = form.save(commit=False)
         recipe.author = request.user
         recipe.save()
@@ -205,16 +205,7 @@ def purchase_download(request, username):
     return response
 
 
-def page_not_found(request, exception):
-    return render(request, 'misc/404.html', {'path': request.path}, status=404)
-
-
-def server_error(request):
-    return render(request, 'misc/500.html', status=500)
-
-
 # ===== JS requests =====
-
 
 @login_required
 def add_subscription(request):

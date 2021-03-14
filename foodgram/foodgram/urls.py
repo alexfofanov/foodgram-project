@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('users.urls')),
@@ -12,8 +13,8 @@ urlpatterns = [
     path('', include('food.urls')),
 ]
 
-handler404 = 'food.views.page_not_found'
-handler500 = 'food.views.server_error'
+handler404 = 'foodgram.views.page_not_found'
+handler500 = 'foodgram.views.server_error'
 
 if settings.DEBUG:
     urlpatterns += static(
