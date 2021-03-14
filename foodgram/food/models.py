@@ -40,11 +40,11 @@ class Recipe(models.Model):
 
 class RecipeIngridient(models.Model):
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='recipe_ingridient'
+        Recipe, on_delete=models.CASCADE, related_name='recipe_ingridients'
     )
     ingridient = models.ForeignKey(
         Ingridient, on_delete=models.CASCADE,
-        related_name='ingridient_ingridient'
+        related_name='recipe_ingridients'
     )
     quantity = models.DecimalField(max_digits=3, decimal_places=0)
 

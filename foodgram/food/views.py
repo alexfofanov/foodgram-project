@@ -53,8 +53,7 @@ def new_recipe(request):
 
 
 def recipe(request, author, recipe_id):
-    author = get_object_or_404(User, username=author)
-    recipe = get_object_or_404(Recipe, id=recipe_id, author=author.id)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author__username=author)
     ingridient_list = RecipeIngridient.objects.select_related(
         'ingridient'
     ).filter(recipe_id=recipe)
@@ -69,9 +68,7 @@ def recipe(request, author, recipe_id):
 
 @login_required
 def recipe_edit(request, author, recipe_id):
-    author = get_object_or_404(User, username=author)
-    recipe = get_object_or_404(Recipe, id=recipe_id, author=author)
-
+    recipe = get_object_or_404(Recipe, id=recipe_id, author__username=author)
     if request.user != recipe.author:
         return redirect('food:recipe', author=author, recipe_id=recipe_id)
 
@@ -104,8 +101,7 @@ def recipe_edit(request, author, recipe_id):
 
 @login_required
 def recipe_delete(request, author, recipe_id):
-    author = get_object_or_404(User, username=author)
-    recipe = get_object_or_404(Recipe, id=recipe_id, author=author)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author__username=author)
     if request.user == recipe.author:
         recipe.delete()
         return redirect('food:index')
@@ -201,7 +197,7 @@ def purchase_download(request, username):
     response = HttpResponse(purches_text,
                             content_type='application/text charset=utf-8')
 
-    response['Content-Disposition'] = 'attachment; filename="purches.txt"'
+    response['Content-Disposition'] = 'attachment; filename="purchases.txt"'
     return response
 
 
