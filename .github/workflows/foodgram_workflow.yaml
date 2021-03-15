@@ -62,6 +62,8 @@ jobs:
             sudo rm -rf /home/alex/foodgram-project
             git clone https://alexfofanov:${{ secrets.ACCESS_TOKEN }}@github.com/alexfofanov/foodgram-project.git
             cd /home/alex/foodgram-project
+            # sudo docker-compose down -v
+            # sudo docker-compose up -d
 
   send_message:
     runs-on: ubuntu-latest
