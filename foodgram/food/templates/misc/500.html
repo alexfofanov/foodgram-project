@@ -5,7 +5,14 @@
     <link rel="stylesheet" href="{% static '/pages/index.css' %}">
 {% endblock stylesheet %}
 
+
 {% block content %}
-        <h1>Ошибка 500</h1>
-        <p>Ошибка на сервере, попробуйте обновить страницу или обратиться позже</p>
+    <main class="main container">
+        <div class="main__header">
+            <h1 class="main__title">Ошибка 500</h1>
+        </div>
+        <p class="form__info-text">
+            Ошибка на сервере, попробуйте обновить страницу или обратиться позже
+        </p>
+    </main>
 {% endblock %}

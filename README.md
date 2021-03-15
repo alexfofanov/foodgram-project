@@ -1,6 +1,8 @@
 # foodgram-project
 ![foodgram-project](https://github.com/alexfofanov/foodgram-project/workflows/foodgram_workflow/badge.svg)
 
+Адрес для проверки работы: http://84.252.131.77/
+
 Это онлайн-сервис, где пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 ## Установка и запуск на примере Linux
@@ -39,7 +41,7 @@ git clone https://github.com/alexfofanov/foodgram-project.git
 
 ### Создайте суперпользователя Django
     docker-compose run web python manage.py createsuperuser
-Сервис доступен по адресу http://localhost:8000
+Сервис доступен по адресу: http://localhost:8000
 
 ### Для остановки и удаления сервиса используйте команду
     docker-compose down
