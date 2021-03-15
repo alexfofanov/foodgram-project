@@ -50,3 +50,16 @@ def addclass(field, css):
 @register.filter
 def get_all_tags(x):
     return Tag.objects.all()
+
+
+@register.filter
+def plural_recipe(number):
+    number = int(number)
+    if number % 10 == 1 and number not in (11, 111):
+        ending = ""
+    elif 1 < number % 10 < 5 and number not in (12, 13, 14, 112, 113, 114):
+        ending = "а"
+    else:
+        ending = "ов"
+
+    return ending

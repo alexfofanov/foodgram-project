@@ -36,7 +36,7 @@
                 
                     {% if subscription.author|recipe_count > 0 %}
                         <li class="card-user__item">
-                            <a href="{% url 'food:author_recipe' subscription.author.username %}" class="card-user__link link">Еще {{ subscription.author|recipe_count }} рецептов...</a>
+                            <a href="{% url 'food:author_recipe' subscription.author.username %}" class="card-user__link link">Еще {{ subscription.author|recipe_count }} рецепт{{ subscription.author|recipe_count|plural_recipe }}...</a>
                         </li>
                     {% endif %}
                 </ul>
