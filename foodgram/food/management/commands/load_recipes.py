@@ -91,17 +91,17 @@ class Command(BaseCommand):
                                      '123',
                                      first_name='Антон Чехов'), 3
         )
-        
+
         create_recipes(
             User.objects.create_user('ivan',
                                      'ivan@mail.io',
                                      '123',
                                      first_name='Иван Тургенев'), 7
         )
-        
+
         create_recipes(
             User.objects.create_user('niko',
                                      'niko@mail.io',
-                                     '123', 
+                                     '123',
                                      first_name='Николай Гоголь'), 5
         )

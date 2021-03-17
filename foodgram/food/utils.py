@@ -27,7 +27,7 @@ def get_recipe_ingridients(data):
 
     for number in ingredient_numbers:
         recipe_ingridients.append(
-            {   
+            {
                 'id': number,
                 'name': data[f'nameIngredient_{number}'],
                 'unit': data[f'unitsIngredient_{number}'],
@@ -73,7 +73,7 @@ def recipe_ingridients_list(recipe):
     recipe_ingridients_list = []
     for ingridient in recipe_ingridients:
         recipe_ingridients_list.append(
-            {   
+            {
                 'id': ingridient.id,
                 'name': ingridient.ingridient.name,
                 'unit': ingridient.ingridient.unit,

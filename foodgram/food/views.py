@@ -48,7 +48,7 @@ def new_recipe(request):
             recipe_ingridients = get_recipe_ingridients(request.POST)
             save_recipe_ingridients(recipe, recipe_ingridients)
             form.save_m2m()
-            return redirect('food:index')    
+            return redirect('food:index')
 
         recipe_tags_form_id = request.POST.getlist('tags')
         recipe_tags = Tag.objects.values_list('slug', flat=True).filter(
