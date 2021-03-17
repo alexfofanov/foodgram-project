@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '+eq56up)=w1rqz_)rl3n_-ym(+kliy6u^m-_0^_jklkhe(kd+2'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -102,4 +102,4 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 PAGINATOR_NUM_PER_PAGE = 6
 
-SITE_ID = 5
+SITE_ID = 4

@@ -3,9 +3,9 @@
     {% for tag in X|get_all_tags %}
         <li class="tags__item">
             {% if tag.slug in filter %}
-                <a id="{{ tag.slug }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }} tags__checkbox_active" href="?filter={{ filter|cut:'-'|cut:tag.slug }}"></a>
+                <a id="{{ tag.slug }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }} tags__checkbox_active" href="?{{ filter|cut_filter:tag.slug }}"></a>
             {% else %}
-                <a id="{{ tag.slug }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}" href="?filter={{ filter|add:tag.slug|add:'-' }}"></a>
+                <a id="{{ tag.slug }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}" href="?{{ filter|add_filter:tag.slug }}"></a>
             {% endif %}
             <span class="tags__label">{{ tag.name }}</span>
         </li>

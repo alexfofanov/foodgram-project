@@ -9,12 +9,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecipeForm
 from .models import (Favorite, Ingridient, Purchase, Recipe, RecipeIngridient,
-                     Subscription, User, Tag)
-from .utils import get_recipe_ingridients, save_recipe_ingridients, tag_filter
+                     Subscription, User, Tag
+                     )
+from .utils import (get_recipe_ingridients, save_recipe_ingridients,
+                    tag_filter, is_form_errors, recipe_ingridients_list
+                    )
 
 
 def index(request):
-    filter = request.GET.get('filter', '')
+    filter = request.GET.getlist('filter')
     recipe_list = tag_filter(filter)
     paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
@@ -31,24 +34,45 @@ def index(request):
 
 @login_required
 def new_recipe(request):
-    form = RecipeForm(request.POST or None, files=request.FILES or None)
+    tags = Tag.objects.all()
+    if request.method == 'POST':
+        form = RecipeForm(request.POST or None, files=request.FILES or None)
+        error_msg = is_form_errors(request.POST)
+        if error_msg:
+            form.add_error(None, error_msg)
 
-    if form.is_valid():
-        recipe = form.save(commit=False)
-        recipe.author = request.user
-        recipe.save()
+        if form.is_valid():
+            recipe = form.save(commit=False)
+            recipe.author = request.user
+            recipe.save()
+            recipe_ingridients = get_recipe_ingridients(request.POST)
+            save_recipe_ingridients(recipe, recipe_ingridients)
+            form.save_m2m()
+            return redirect('food:index')    
+
+        recipe_tags_form_id = request.POST.getlist('tags')
+        recipe_tags = Tag.objects.values_list('slug', flat=True).filter(
+            id__in=recipe_tags_form_id)
         recipe_ingridients = get_recipe_ingridients(request.POST)
-        save_recipe_ingridients(recipe, recipe_ingridients)
-        form.save_m2m()
-        return redirect('food:index')
 
+        data = {
+            'form': form,
+            'tags': tags,
+            'recipe_tags': recipe_tags,
+            'recipe_ingridient': recipe_ingridients,
+            'edit_flag': False,
+        }
+        return render(request,
+                      'food/formRecipe.html',
+                      context=data)
+
+    form = RecipeForm()
     tags = Tag.objects.all()
     data = {
         'form': form,
         'tags': tags,
         'edit_flag': False,
     }
-
     return render(request, 'food/formRecipe.html', context=data)
 
 
@@ -72,31 +96,54 @@ def recipe_edit(request, author, recipe_id):
     if request.user != recipe.author:
         return redirect('food:recipe', author=author, recipe_id=recipe_id)
 
-    recipe_ingridient = RecipeIngridient.objects.filter(recipe=recipe)
-
-    form = RecipeForm(
-        request.POST or None, files=request.FILES or None, instance=recipe
-    )
-
-    if form.is_valid():
-        recipe = form.save()
-        recipe_ingridient.delete()
-        recipe_ingridients = get_recipe_ingridients(request.POST)
-        save_recipe_ingridients(recipe, recipe_ingridients)
-        return redirect('food:recipe', author=author, recipe_id=recipe_id)
-
     tags = Tag.objects.all()
+
+    if request.method == 'POST':
+        form = RecipeForm(request.POST or None, files=request.FILES or None,
+                          instance=recipe)
+        error_msg = is_form_errors(request.POST)
+        if error_msg:
+            form.add_error(None, error_msg)
+
+        if form.is_valid():
+            recipe = form.save()
+            recipe_ingridients = RecipeIngridient.objects.filter(recipe=recipe)
+            recipe_ingridients.delete()
+            recipe_ingridients = get_recipe_ingridients(request.POST)
+            save_recipe_ingridients(recipe, recipe_ingridients)
+            return redirect('food:recipe', author=author, recipe_id=recipe_id)
+
+        recipe_tags_form_id = request.POST.getlist('tags')
+        recipe_tags = Tag.objects.values_list('slug', flat=True).filter(
+            id__in=recipe_tags_form_id)
+        recipe_ingridients = get_recipe_ingridients(request.POST)
+
+        data = {
+            'form': form,
+            'tags': tags,
+            'recipe_tags': recipe_tags,
+            'recipe_ingridient': recipe_ingridients,
+            'recipe_id': recipe.id,
+            'edit_flag': True,
+        }
+        return render(request,
+                      'food/formRecipe.html',
+                      context=data)
+
+    form = RecipeForm(instance=recipe)
     recipe_tags = recipe.tags.values_list('slug', flat=True)
+    recipe_ingridients = recipe_ingridients_list(recipe)
     data = {
         'form': form,
         'tags': tags,
-        'recipe_ingridient': recipe_ingridient,
         'recipe_tags': recipe_tags,
+        'recipe_ingridient': recipe_ingridients,
         'recipe_id': recipe.id,
         'edit_flag': True,
     }
-
-    return render(request, 'food/formRecipe.html', context=data)
+    return render(request,
+                  'food/formRecipe.html',
+                  context=data)
 
 
 @login_required
@@ -111,7 +158,7 @@ def recipe_delete(request, author, recipe_id):
 
 def author_recipe(request, author):
     author = get_object_or_404(User, username=author)
-    filter = request.GET.get('filter', '')
+    filter = request.GET.getlist('filter')
     recipe_list = tag_filter(filter).filter(author=author)
     paginator = Paginator(recipe_list, settings.PAGINATOR_NUM_PER_PAGE)
     page_number = request.GET.get('page')
@@ -146,8 +193,7 @@ def subscription(request, username):
 
 @login_required
 def favorite(request, username):
-    filter = request.GET.get('filter', '')
-
+    filter = request.GET.getlist('filter')
     recipe_list = tag_filter(filter)
     favorite_recipe_list = recipe_list.filter(favorites__user=request.user)
 
@@ -201,6 +247,16 @@ def purchase_download(request, username):
     return response
 
 
+@login_required
+def purchase_delete(request, username, recipe_id):
+    purchase = get_object_or_404(Purchase,
+                                 user__username=username,
+                                 recipe=recipe_id)
+    purchase.delete()
+
+    return redirect('food:purchase', username=request.user.username)
+
+
 # ===== JS requests =====
 
 @login_required
@@ -219,10 +275,11 @@ def add_subscription(request):
 
 @login_required
 def remove_subscription(request, author_id):
-    author = get_object_or_404(User, id=author_id)
-    remove = Subscription.objects.filter(
-        user=request.user, author=author
-    ).delete()
+    if request.method == 'DELETE':
+        author = get_object_or_404(User, id=author_id)
+        remove = Subscription.objects.filter(
+            user=request.user, author=author
+        ).delete()
 
     data = {'success': remove}
 

@@ -53,6 +53,33 @@ def get_all_tags(x):
 
 
 @register.filter
+def add_filter(filter_list, tag_slug):
+    previous_filters = ''
+    for filter in filter_list:
+        previous_filters += f'filter={filter}&'
+
+    return f'{previous_filters}filter={tag_slug}&'
+
+
+@register.filter
+def cut_filter(filter_list, tag_slug):
+    previous_filters = ''
+    for filter in filter_list:
+        previous_filters += f'filter={filter}&'
+
+    return previous_filters.replace(f'filter={tag_slug}&', '')
+
+
+@register.filter
+def create_filter(filter_list):
+    filters = ''
+    for filter in filter_list:
+        filters += f'filter={filter}&'
+
+    return filters
+
+
+@register.filter
 def plural_recipe(number):
     number = int(number)
     if number % 10 == 1 and number not in (11, 111):

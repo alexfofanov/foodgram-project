@@ -6,4 +6,4 @@ RUN pip install pip --upgrade
 RUN pip install -r requirements.txt
 COPY . .
 WORKDIR /code/foodgram
-CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
+CMD /code/foodgram/gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000

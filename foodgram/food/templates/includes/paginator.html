@@ -1,8 +1,8 @@
 <nav class="pagination" aria-label="Search results pages">
     <ul class="pagination__container">
-
+        {% load food_filters%}
         {% if items.has_previous %}
-            <li class="pagination__item"><a class="pagination__link link" href="?page={{ items.previous_page_number }}&tag={{ tag }}"><span class="icon-left"></span></a></li>
+            <li class="pagination__item"><a class="pagination__link link" href="?page={{ items.previous_page_number }}&{{ filter|create_filter }}"><span class="icon-left"></span></a></li>
         {% else %}
             <li class="pagination__item"><a class="pagination__link link" href="#" tabindex="-1 " aria-disabled="true"><span class="icon-left"></span></a></li>
         {% endif %}
@@ -11,12 +11,12 @@
             {% if items.number == i %}
                 <li class="pagination__item pagination__item_active"><a class="pagination__link link" href="#">{{ i }}</a></li>
             {% else %}
-                <li class="pagination__item"><a class="pagination__link link" href="?page={{ i }}&tag={{ tag }}">{{ i }}</a></li>   
+                <li class="pagination__item"><a class="pagination__link link" href="?page={{ i }}&{{ filter|create_filter }}">{{ i }}</a></li>   
                 {% endif %}
         {% endfor %}
 
         {% if items.has_next %}
-            <li class="pagination__item"><a class="pagination__link link" href="?page={{ items.next_page_number }}&tag={{ tag }}"><span class="icon-right"></span></a></li>
+            <li class="pagination__item"><a class="pagination__link link" href="?page={{ items.next_page_number }}&{{ filter|create_filter }}"><span class="icon-right"></span></a></li>
         {% else %}
             <li class="pagination__item"><a class="pagination__link link" href="#"><span class="icon-right" tabindex="-1" aria-disabled="true"> </a></li>
         {% endif %}

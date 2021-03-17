@@ -46,7 +46,7 @@ class RecipeIngridient(models.Model):
         Ingridient, on_delete=models.CASCADE,
         related_name='recipe_ingridients'
     )
-    quantity = models.DecimalField(max_digits=3, decimal_places=0)
+    quantity = models.DecimalField(max_digits=5, decimal_places=0)
 
 
 class Subscription(models.Model):

@@ -58,21 +58,22 @@
                             <input type="number" id="cantidad" class="form__input" min="0">
                             <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                         </div>
-
+                        
                         <div class="form__field-group-ingredientes-container">
                             {% if recipe_ingridient %}
                                 {% for ingridient in recipe_ingridient %}
                                     <div class="form__field-item-ingredient" id="ing_{{ ing.ingredient.id }}">
-                                    <span> {{ ingridient.ingridient.name }} {{ ingridient.quantity }} {{ ingridient.ingredient.unit }}</span>
+                                    <span> {{ ingridient.name }} {{ ingridient.quantity }} {{ ingridient.unit }}</span>
                                     <span class="form__field-item-delete"></span>
-                                    <input id="nameIngredient_{{ ingridient.id }}" name="nameIngredient_{{ ingridient.id }}" type="hidden" value="{{ ingridient.ingridient.name }}">
+                                    <input id="nameIngredient_{{ ingridient.id }}" name="nameIngredient_{{ ingridient.id }}" type="hidden" value="{{ ingridient.name }}">
                                     <input id="valueIngredient_{{ ingridient.id }}" name="valueIngredient_{{ ingridient.id }}" type="hidden" value="{{ ingridient.quantity }}">
-                                    <input id="unitsIngredient_{{ ingridient.id }}" name="unitsIngredient_{{ ingridient.id }}" type="hidden" value="{{ ingridient.ingridient.unit }}">
+                                    <input id="unitsIngredient_{{ ingridient.id }}" name="unitsIngredient_{{ ingridient.id }}" type="hidden" value="{{ ingridient.unit }}">
                             </div>
                                 {% endfor %}
                             {% endif %}
 
                         </div>
+
                         <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                         <span class="form__error"></span>
                     </div>

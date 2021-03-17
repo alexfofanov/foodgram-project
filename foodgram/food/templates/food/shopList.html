@@ -23,7 +23,8 @@
                         <h3 class="recipe__title">{{ purchase.recipe.name }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span> {{ purchase.recipe.time }} мин.</p>
                     </div>
-                    <a href="{% url 'food:remove_purchase' purchase.recipe.id %}" class="shopping-list__button link">Удалить</a>
+                    {# <a href="{% url 'food:remove_purchase' purchase.recipe.id %}" class="shopping-list__button link">Удалить</a> #}
+                    <a href="{% url 'food:purchase_delete' username=user.username recipe_id=purchase.recipe.id %}" class="shopping-list__button link">Удалить</a>
                 </li>
                 {% endfor %}
             </ul>    

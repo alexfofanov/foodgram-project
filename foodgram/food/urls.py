@@ -50,4 +50,9 @@ urlpatterns = [
         views.purchase_download,
         name='purchase_download',
     ),
+    path(
+        '<str:username>/<int:recipe_id>/purchase_delete/',
+        views.purchase_delete,
+        name='purchase_delete',
+    ),
 ]
