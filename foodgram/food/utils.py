@@ -59,11 +59,11 @@ def is_form_errors(data):
     recipe_tags_form_id = data.getlist('tags')
     error_msg = ''
     if not recipe_ingridients_form:
-        error_msg += 'Пожалуйста, добавте ингридиент. \n'
+        error_msg += 'Пожалуйста, добавьте ингридиент. \n'
     if not is_quantity_positive(recipe_ingridients_form):
-        error_msg += 'Пожалуйста, исправте отрицательное количество. \n'
+        error_msg += 'Пожалуйста, исправьте отрицательное количество. \n'
     if not recipe_tags_form_id:
-        error_msg += 'Пожалуйста, добавте хотя бы один тег. \n'
+        error_msg += 'Пожалуйста, добавьте хотя бы один тег. \n'
 
     return error_msg
 
