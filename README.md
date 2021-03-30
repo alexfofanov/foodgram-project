@@ -19,14 +19,16 @@
 
 git clone https://github.com/alexfofanov/foodgram-project.git
 
-### Создайте файл .env с переменными окружения для работы с БД в корне приложения и добавьте в него следующие параметры:
+### Создайте файл .env с переменными окружения в корне приложения и добавьте в него следующие параметры:
 
+    SECRET_KEY=pR(vp1)y(m0h2e86c01lm+$-72i#na)*i4e3$3@663re&_wx%4 # секретный ключ Django (установите свой)
     DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql
     DB_NAME=postgres # имя базы данных
     POSTGRES_USER=postgres # логин для подключения к базе данных
     POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой)
     DB_HOST=db # название сервиса (контейнера)
     DB_PORT=5432 # порт для подключения к БД
+    
 
 ### Запустите docker-compose
     docker-compose up -d
