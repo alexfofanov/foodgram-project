@@ -43,16 +43,18 @@ git clone https://github.com/alexfofanov/foodgram-project.git
 
 ### Создайте суперпользователя Django
     docker-compose run web python manage.py createsuperuser
-Сервис доступен по адресу: http://localhost:8000
+Сервис доступен по адресу: http://localhost
 
 ### Для остановки и удаления сервиса используйте команду
     docker-compose down
 
 ### Технологии
-    + Python  
-    + Django
-    + PostgreSQL
-    + Gunicorn
-    + Nginx
-    + Docker
     
++ Python  
++ Django
++ PostgreSQL
++ Gunicorn
++ Nginx
++ Docker
++ Docker Compose
++ GitHub Actions
