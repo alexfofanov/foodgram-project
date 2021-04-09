@@ -48,9 +48,8 @@ git clone https://github.com/alexfofanov/foodgram-project.git
 ### Для остановки и удаления сервиса используйте команду
     docker-compose down
 
-### Технологии
-    
-+ Python  
+### Технологии    
++ Python3  
 + Django
 + PostgreSQL
 + Gunicorn
